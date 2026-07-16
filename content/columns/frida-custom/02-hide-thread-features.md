@@ -11,7 +11,7 @@ aliases: ["/posts/47934e/"]
 - `gmain` / `gdbus`  
 - `pool-frida`  
 
----
+
 
 ## 1. 发现特征：现场抓包  
 一条命令看目标进程所有线程名：
@@ -42,13 +42,13 @@ fi
 ```
 
 输出当场暴露：  
-```
+```bash
 Name:	gmain  
 Name:	gdbus  
 Name:	pool-frida  
 ```
 
----
+
 
 ## 2. 用户态补丁：改掉静态字符串  
 GLib 的 `gmain`、`gdbus` 都是编译期写死的常量，直接二进制替换最快。  
@@ -77,13 +77,12 @@ python patch_thread_names.py frida-server
 ```
 
 推回手机，重启注入，再看 `/proc/*/status`：  
-```
+```bash
 Name:	aZqW          ← gmain 已消失  
 Name: XtVb          ← gdbus 已消失  
 Name: pool-frida    ← 还在！
 ```
 
----
 
 ## 3. 内核态劫持：让 `pool-frida` 原地蒸发  
 `pool-frida` 是运行时通过 `prctl(PR_SET_NAME, …)` 设置的，单纯改二进制无效，直接给内核加个小后门：  
@@ -103,7 +102,7 @@ case PR_SET_NAME:
 
 编译 boot.img，刷机重启。
 
----
+
 
 ## 4. 另一种方法：不需要改内核  
 如果不想动内核，可在 Frida 源码里直接把线程名改掉，只需两行补丁：
@@ -167,7 +166,7 @@ Name:	XgEni
 Name:	pool-ggbond   ← 曾经叫 pool-frida
 ```
 
----
+
 
 ## 5. 历史遗留特征：gum-js-loop（12.8.0 以及其他老版本）
 
@@ -183,6 +182,6 @@ Name:	pool-frida
 Name:	gum-js-loop    ← 多出来这位
 ```
 
----
+
 
 至此，所有可疑线程名全部消失，现场干净。

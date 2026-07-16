@@ -13,7 +13,6 @@ git clone -b 16.5.6 --recurse-submodules https://github.com/frida/frida
 ```
 
 
----
 
 ## 1. 生成 Android-arm64 构建配置
 
@@ -23,7 +22,7 @@ git clone -b 16.5.6 --recurse-submodules https://github.com/frida/frida
 
 执行完毕后，当前目录会出现 `build/` 文件夹，里面即是 ninja 所需的构建文件。
 
----
+
 
 ## 2. 第一次 `ninja` 报错
 
@@ -35,7 +34,7 @@ ninja
 大概率会报错：  
 **系统自带的 `/usr/bin/ninja` 版本过旧，无法识别 Frida 构建文件中的新语法。**
 
----
+
 
 ## 3. 切换到 Frida 自带 ninja
 
@@ -55,7 +54,7 @@ which ninja
 
 > 若仍显示 `/usr/bin/ninja`，检查路径拼写或重新打开终端。
 
----
+
 
 ## 4. 继续编译
 
@@ -67,7 +66,7 @@ ninja
  
 终端无报错即视为编译成功。
 
----
+
 
 ## 5. 验证成品
 

@@ -9,7 +9,7 @@ aliases: ["/posts/6f7a9f/"]
 > 主机环境：Ubuntu 22.04 
 > 工具链：Android NDK r20b（LLVM/Clang）
 
----
+
 
 ## 1. 准备源码与工具链
 
@@ -22,7 +22,7 @@ git clone https://github.com/AgentFabulous/begonia.git
 wget https://dl.google.com/android/repository/android-ndk-r20b-linux-x86_64.zip
 ```
 
----
+
 
 ## 2. 导出临时环境变量
 
@@ -42,7 +42,7 @@ chmod +x env.sh
 source env.sh
 ```
 
----
+
 
 ## 3. 生成默认配置
 
@@ -51,7 +51,7 @@ mkdir output
 make O=output begonia_user_defconfig
 ```
 
----
+
 
 ## 4. 全速编译（Release）
 
@@ -66,7 +66,7 @@ make O=output ARCH=arm64 \
 编译产物：  
 `output/arch/arm64/boot/Image.gz-dtb`（刷机包所需内核）
 
----
+
 
 ## 5. 单线程排错（Debug）
 
@@ -82,7 +82,6 @@ make O=output ARCH=arm64 \
 
 `fail.log` 会记录完整命令与报错，便于检索。
 
----
 
 ## 6. 清理与重置
 
