@@ -1,0 +1,4 @@
+name = "Thnuller"
+license = "MIT"
+description = "A minimal red and black Hugo theme for security writing."
+min_version = "0.120.0"

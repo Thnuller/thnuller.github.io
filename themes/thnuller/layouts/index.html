@@ -1,0 +1,16 @@
+{{ define "main" }}
+{{ $posts := where site.RegularPages "Section" "posts" }}
+{{ $paginator := .Paginate ($posts.ByDate.Reverse) }}
+<section class="home-posts">
+  <header class="archive-mast">
+    <p>THNULLER / FIELD NOTES</p>
+    <div><strong>RECENT LOGS</strong><span>{{ len $posts }} 篇记录<br>{{ now.Format "2006" }} — 持续更新</span></div>
+  </header>
+  <div class="post-list">
+    {{ range $paginator.Pages }}
+      {{ partial "post-row.html" . }}
+    {{ end }}
+  </div>
+  {{ partial "pagination.html" . }}
+</section>
+{{ end }}

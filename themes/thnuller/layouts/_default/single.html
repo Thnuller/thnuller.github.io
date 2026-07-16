@@ -1,0 +1,9 @@
+{{ define "main" }}
+<div class="article-shell">
+  <article class="article">
+    <header class="article-header"><p class="article-kicker">{{ .Section | upper }} / {{ .Date.Format "2006.01.02" }}</p><h1>{{ .Title }}</h1>{{ with .Description }}<p class="article-dek">{{ . }}</p>{{ end }}<div class="article-meta"><span>{{ .ReadingTime }} 分钟阅读</span>{{ with .Params.tags }}<span>{{ delimit . " / " }}</span>{{ end }}</div></header>
+    <div class="article-content">{{ .Content }}</div>
+  </article>
+  {{ partial "toc.html" . }}
+</div>
+{{ end }}

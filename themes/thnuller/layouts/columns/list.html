@@ -1,0 +1,14 @@
+{{ define "main" }}
+{{ if eq .Parent.Kind "home" }}
+  <section class="archive">
+    <header class="archive-mast">
+      <p>SERIES / DEEP DIVES</p>
+      <div><strong>TOPIC COLUMNS</strong><span>{{ len .Sections }} 个专栏<br>围绕主题持续深入</span></div>
+    </header>
+    <div class="column-grid">{{ range $column := .Sections }}<a class="column-card" href="{{ $column.RelPermalink }}"><div><h2>{{ $column.Title }}</h2><p>{{ $column.Description }}</p><small>{{ len $column.RegularPages }} ARTICLES</small></div><span class="arrow">↗</span></a>{{ end }}</div>
+  </section>
+{{ else }}
+  <header class="list-header column-list-header"><p class="eyebrow">COLUMN</p><h1>{{ .Title }}</h1><p>{{ .Description }}</p></header>
+  <section class="archive column-archive"><div class="post-list">{{ range .Pages.ByWeight }}{{ partial "post-row.html" . }}{{ end }}</div></section>
+{{ end }}
+{{ end }}

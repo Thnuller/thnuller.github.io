@@ -1,0 +1,14 @@
+{{ define "main" }}
+<div class="column-shell">
+  <aside class="column-nav">
+    <a class="back-link" href="{{ .Parent.RelPermalink }}">← {{ .Parent.Title }}</a>
+    <p>本栏文章</p>
+    <nav>{{ range $index, $page := .Parent.Pages.ByWeight }}<a href="{{ $page.RelPermalink }}" class="{{ if eq $page.RelPermalink $.RelPermalink }}active{{ end }}"><span>{{ printf "%02d" (add $index 1) }}</span>{{ $page.Title }}</a>{{ end }}</nav>
+  </aside>
+  <article class="article">
+    <header class="article-header"><p class="article-kicker">{{ .Parent.Title }} / {{ .Date.Format "2006.01.02" }}</p><h1>{{ .Title }}</h1>{{ with .Description }}<p class="article-dek">{{ . }}</p>{{ end }}<div class="article-meta"><span>{{ .ReadingTime }} 分钟阅读</span></div></header>
+    <div class="article-content">{{ .Content }}</div>
+  </article>
+  {{ partial "toc.html" . }}
+</div>
+{{ end }}

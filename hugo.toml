@@ -1,0 +1,34 @@
+baseURL = "https://example.org/"
+languageCode = "zh-cn"
+title = "Thnuller"
+theme = "thnuller"
+enableRobotsTXT = true
+
+[pagination]
+  pagerSize = 6
+
+[params]
+  description = "安全研究与攻防笔记"
+  author = "Thnuller"
+
+[markup]
+  [markup.highlight]
+    noClasses = false
+    lineNos = true
+    lineNumbersInTable = true
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+    ordered = false
+
+[[menus.main]]
+  name = "文章"
+  pageRef = "/posts"
+  weight = 10
+
+[[menus.main]]
+  name = "专栏"
+  pageRef = "/columns"
+  weight = 20

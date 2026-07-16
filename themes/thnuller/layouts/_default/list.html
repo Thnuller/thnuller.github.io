@@ -1,0 +1,17 @@
+{{ define "main" }}
+<section class="archive">
+  {{ if eq .Section "columns" }}
+    {{ range $column := .Sections }}
+      <a class="column-card" href="{{ $column.RelPermalink }}"><div><h2>{{ $column.Title }}</h2><p>{{ $column.Description }}</p></div><span class="arrow">↗</span></a>
+    {{ end }}
+  {{ else }}
+    {{ $paginator := .Paginate (.Pages.ByDate.Reverse) }}
+    <header class="archive-mast">
+      <p>SECURITY / RESEARCH / NOTES</p>
+      <div><strong>ALL POSTS</strong><span>{{ len .Pages }} 篇文章<br>按时间倒序</span></div>
+    </header>
+    <div class="post-list">{{ range $paginator.Pages }}{{ partial "post-row.html" . }}{{ end }}</div>
+    {{ partial "pagination.html" . }}
+  {{ end }}
+</section>
+{{ end }}
