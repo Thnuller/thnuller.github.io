@@ -372,3 +372,109 @@ ping 192.168.2.101
 
 
 
+## 多虚拟机互通规则（补充）
+
+> **适用场景**：当宿主机上有**多个 TAP 设备**（如 `tap-vm0`、`tap-vm1`）时，需要额外添加规则，让不同虚拟机之间可以互相通信。
+
+### 1. 创建独立脚本
+
+```bash
+sudo nano /usr/local/sbin/vm-tap-forward
+```
+
+```bash
+#!/bin/sh
+set -eu
+
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+
+# TAP 设备列表（按需添加）
+TAP_DEVICES="tap-vm0 tap-vm1"
+
+# 允许所有 TAP 设备之间互相转发
+for dev1 in $TAP_DEVICES; do
+    for dev2 in $TAP_DEVICES; do
+        [ "$dev1" != "$dev2" ] || continue
+        iptables -w -C FORWARD -i "$dev1" -o "$dev2" -j ACCEPT 2>/dev/null || \
+            iptables -w -I FORWARD 1 -i "$dev1" -o "$dev2" -j ACCEPT
+    done
+done
+```
+
+赋予执行权限：
+
+```bash
+sudo chmod +x /usr/local/sbin/vm-tap-forward
+```
+
+---
+
+### 2. 创建对应的 systemd 服务
+
+```bash
+sudo nano /etc/systemd/system/vm-tap-forward.service
+```
+
+```ini
+[Unit]
+Description=Forward rules between TAP devices
+After=vm-tap.service vm-tap-win.service
+Wants=vm-tap.service vm-tap-win.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/vm-tap-forward
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+```
+
+> **关键**：`After=vm-tap.service vm-tap-win.service` 确保所有 TAP 设备**先创建完成**，再添加互转规则。
+
+---
+
+### 3. 启用服务
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable vm-tap-forward.service
+sudo systemctl start vm-tap-forward.service
+sudo systemctl status vm-tap-forward.service
+```
+
+
+### 4. 验证互转规则
+
+```bash
+sudo iptables -L FORWARD -n -v | grep "tap-vm"
+```
+
+预期输出中包含：
+
+```
+ACCEPT     all  --  tap-vm1 tap-vm0  0.0.0.0/0            0.0.0.0/0
+ACCEPT     all  --  tap-vm0 tap-vm1  0.0.0.0/0            0.0.0.0/0
+```
+
+此时两个虚拟机之间即可互相 ping 通。
+
+
+### 5. 扩展新虚拟机
+
+当新增第三个 TAP 设备时，只需修改 `/usr/local/sbin/vm-tap-forward`：
+
+```bash
+# 修改前
+TAP_DEVICES="tap-vm0 tap-vm1"
+
+# 修改后
+TAP_DEVICES="tap-vm0 tap-vm1 tap-vm2"
+```
+
+重启服务即可：
+
+```bash
+sudo systemctl restart vm-tap-forward.service
+```
+
