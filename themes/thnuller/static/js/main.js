@@ -47,7 +47,8 @@ if (headings.length && links.length && toc) {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
-      links.forEach((link) => link.classList.toggle('active', link.hash === `#${entry.target.id}`));
+      const id = `#${entry.target.id}`;
+      links.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === id));
     });
     const active = toc.querySelector('a.active');
     if (active) {
