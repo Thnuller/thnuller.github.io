@@ -24,6 +24,26 @@ const headings = [...document.querySelectorAll('.article-content h2, .article-co
 const links = [...document.querySelectorAll('.toc a')];
 const toc = document.querySelector('.toc');
 if (headings.length && links.length && toc) {
+  let scrollRAF = null;
+  const scrollTocTo = (targetTop) => {
+    const max = toc.scrollHeight - toc.clientHeight;
+    const end = Math.max(0, Math.min(targetTop, max));
+    const start = toc.scrollTop;
+    const dist = end - start;
+    if (Math.abs(dist) < 1) { toc.scrollTop = end; return; }
+    const duration = 300;
+    let startTime = null;
+    const step = (ts) => {
+      if (startTime === null) startTime = ts;
+      const p = Math.min(1, (ts - startTime) / duration);
+      const eased = p < 0.5 ? 2 * p * p : -1 + (4 - 2 * p) * p;
+      toc.scrollTop = start + dist * eased;
+      if (p < 1) scrollRAF = requestAnimationFrame(step);
+    };
+    if (scrollRAF) cancelAnimationFrame(scrollRAF);
+    scrollRAF = requestAnimationFrame(step);
+  };
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
@@ -31,8 +51,10 @@ if (headings.length && links.length && toc) {
     });
     const active = toc.querySelector('a.active');
     if (active) {
-      const top = active.offsetTop - toc.clientHeight / 2 + active.clientHeight / 2;
-      toc.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      const activeRect = active.getBoundingClientRect();
+      const tocRect = toc.getBoundingClientRect();
+      const top = toc.scrollTop + (activeRect.top - tocRect.top) - toc.clientHeight / 2 + activeRect.height / 2;
+      scrollTocTo(top);
     }
   }, { rootMargin: '-18% 0px -70%' });
   headings.forEach((heading) => observer.observe(heading));
