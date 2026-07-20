@@ -22,12 +22,18 @@ syncAppearance();
 
 const headings = [...document.querySelectorAll('.article-content h2, .article-content h3')];
 const links = [...document.querySelectorAll('.toc a')];
-if (headings.length && links.length) {
+const toc = document.querySelector('.toc');
+if (headings.length && links.length && toc) {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       links.forEach((link) => link.classList.toggle('active', link.hash === `#${entry.target.id}`));
     });
+    const active = toc.querySelector('a.active');
+    if (active) {
+      const top = active.offsetTop - toc.clientHeight / 2 + active.clientHeight / 2;
+      toc.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    }
   }, { rootMargin: '-18% 0px -70%' });
   headings.forEach((heading) => observer.observe(heading));
 }
