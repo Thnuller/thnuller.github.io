@@ -155,3 +155,22 @@ codeBlocks.forEach((block) => {
     });
   });
 });
+
+const lightbox = document.createElement('div');
+lightbox.className = 'lightbox';
+lightbox.innerHTML = '<img alt="">';
+const lightboxImg = lightbox.querySelector('img');
+document.body.appendChild(lightbox);
+
+document.querySelectorAll('.article-content img').forEach((img) => {
+  img.addEventListener('click', (e) => {
+    e.preventDefault();
+    lightboxImg.src = img.currentSrc || img.src;
+    lightbox.classList.add('open');
+  });
+});
+
+lightbox.addEventListener('click', () => lightbox.classList.remove('open'));
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') lightbox.classList.remove('open');
+});
